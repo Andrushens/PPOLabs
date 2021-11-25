@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:calculator/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,9 +14,11 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
   final TextEditingController _resultController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   bool _isScientific = false;
   bool _isInv = false;
   bool _isDemo = false;
+  final List<String> nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   @override
   void initState() {
@@ -55,16 +59,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
   void _changeOrientation(BuildContext context) {
     MediaQuery.of(context).orientation == Orientation.landscape
         ? setState(() {
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitDown,
-              DeviceOrientation.portraitUp,
-            ]);
+            SystemChrome.setPreferredOrientations(
+              [
+                DeviceOrientation.portraitDown,
+                DeviceOrientation.portraitUp,
+              ],
+            );
           })
         : setState(() {
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ]);
+            SystemChrome.setPreferredOrientations(
+              [
+                DeviceOrientation.landscapeLeft,
+                DeviceOrientation.landscapeRight,
+              ],
+            );
           });
   }
 
@@ -107,16 +115,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
         decoration: const BoxDecoration(
           color: Color(0xFFF0E2d7),
         ),
-        child: TextField(
-          controller: _resultController,
-          textAlign: TextAlign.end,
-          showCursor: true,
-          style: const TextStyle(fontSize: 28),
-          enableInteractiveSelection: true,
-          readOnly: true,
-          cursorColor: Colors.brown,
-          decoration: const InputDecoration(
-            border: InputBorder.none,
+        child: Container(
+          alignment: Alignment.bottomRight,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            reverse: true,
+            child: SelectableText(
+              _resultController.text,
+              maxLines: 1,
+              style: const TextStyle(fontSize: 28),
+            ),
           ),
         ),
       ),
@@ -320,29 +328,52 @@ class _CalculatorPageState extends State<CalculatorPage> {
               _resultController.text = expr;
             }
           } else {
-            switch (expr) {
-              case '=':
-                _evaluate();
-                break;
-              case 'AC':
-                _resultController.text = '';
-                break;
-              case 'inv':
-                setState(() {
-                  _isInv = !_isInv;
-                });
-                break;
-              case 'C':
-                try {
-                  _resultController.text = _resultController.text
-                      .substring(0, _resultController.text.length - 1);
-                } catch (e) {
+            setState(() {
+              switch (expr) {
+                case '=':
+                  _evaluate();
+                  break;
+                case 'AC':
                   _resultController.text = '';
-                }
-                break;
-              default:
-                _resultController.text += expr;
-            }
+                  break;
+                case 'inv':
+                  setState(() {
+                    _isInv = !_isInv;
+                  });
+                  break;
+                case 'C':
+                  try {
+                    _resultController.text = _resultController.text
+                        .substring(0, _resultController.text.length - 1);
+                  } catch (e) {
+                    _resultController.text = '';
+                  }
+                  break;
+                default:
+                  var isValid = true;
+                  var current = '${_resultController.text}$expr'
+                      .split('')
+                      .reversed
+                      .join();
+                  for (var i = 0; i < 16 && i < current.length; i++) {
+                    if (!nums.contains(current[i])) {
+                      break;
+                    }
+                    if (i == 15) {
+                      isValid = false;
+                    }
+                  }
+                  if (isValid) {
+                    _resultController.text += expr;
+                  }
+
+                  if (_scrollController.hasClients) {
+                    _scrollController.jumpTo(
+                      _scrollController.position.maxScrollExtent,
+                    );
+                  }
+              }
+            });
           }
         },
         child: Center(
@@ -361,30 +392,51 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   void _evaluate() {
-    Parser p = Parser();
     try {
+      Parser p = Parser();
       String expression = _resultController.text
           .replaceAll('x', '*')
           .replaceAll('÷', '/')
           .replaceAll('log(', 'log(10,')
           .replaceAll('acos', 'arccos')
           .replaceAll('asin', 'arcsin')
-          .replaceAll('√', 'sqrt(')
-          .replaceAll('sqrt((', 'sqrt(')
-          .replaceAll('atan', 'arctan');
+          .replaceAll('√', 'sqrt')
+          .replaceAll('atan', 'arctan')
+          .replaceAll('π', pi.toString())
+          .replaceAll('e', e.toString());
       if ('('.allMatches(expression).length >
           ')'.allMatches(expression).length) {
         expression += ')';
       }
       Expression exp = p.parse(expression);
       ContextModel cm = ContextModel();
-      double res = exp.evaluate(EvaluationType.REAL, cm);
+      var res = exp.evaluate(EvaluationType.REAL, cm);
+      var ans = '';
+
+      if (res > 999999999999999 || res.toString().contains('e+')) {
+        throw 'pudge';
+      } else if (res - res.ceil() == 0) {
+        ans = res.ceil().toString();
+      } else if (res == pi) {
+        ans = 'π';
+      } else if (res == e) {
+        ans = 'e';
+      } else {
+        ans = '$res';
+      }
+
       setState(() {
-        _resultController.text = '$res';
+        _resultController.text = ans;
       });
     } catch (e) {
       setState(() {
-        _resultController.text = 'Format Error!';
+        switch (e) {
+          case 'pudge':
+            _resultController.text = 'infinity';
+            break;
+          default:
+            _resultController.text = 'Format Error!';
+        }
       });
     }
   }

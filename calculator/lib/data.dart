@@ -119,7 +119,6 @@ final scientificButtonElementsLists = <List<ButtonElement>>[
     ),
     ButtonElement(
       symbol: 'π',
-      expression: pi.toString().substring(0, 6),
     ),
     ButtonElement(
       symbol: '^',
@@ -153,7 +152,6 @@ final scientificButtonElementsLists = <List<ButtonElement>>[
   <ButtonElement>[
     ButtonElement(
       symbol: 'e',
-      expression: e.toString().substring(0, 6),
     ),
     ButtonElement(
       symbol: 'ln',
