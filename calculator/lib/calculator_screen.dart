@@ -14,7 +14,6 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
   final TextEditingController _resultController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
   bool _isScientific = false;
   bool _isInv = false;
   bool _isDemo = false;
@@ -365,12 +364,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   }
                   if (isValid) {
                     _resultController.text += expr;
-                  }
-
-                  if (_scrollController.hasClients) {
-                    _scrollController.jumpTo(
-                      _scrollController.position.maxScrollExtent,
-                    );
                   }
               }
             });
