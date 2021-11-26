@@ -322,51 +322,68 @@ class _CalculatorPageState extends State<CalculatorPage> {
           }
           if (_resultController.text == 'Format Error!') {
             if (expr == 'AC' || expr == 'C') {
-              _resultController.text = '';
+              setState(() {
+                _resultController.text = '';
+              });
             } else {
-              _resultController.text = expr;
+              setState(() {
+                _resultController.text = expr;
+              });
             }
           } else {
-            setState(() {
-              switch (expr) {
-                case '=':
-                  _evaluate();
-                  break;
-                case 'AC':
+            switch (expr) {
+              case '=':
+                _evaluate();
+                break;
+              case 'AC':
+                setState(() {
                   _resultController.text = '';
-                  break;
-                case 'inv':
+                });
+                break;
+              case 'inv':
+                setState(() {
+                  _isInv = !_isInv;
+                });
+                break;
+              case 'C':
+                try {
                   setState(() {
-                    _isInv = !_isInv;
-                  });
-                  break;
-                case 'C':
-                  try {
                     _resultController.text = _resultController.text
                         .substring(0, _resultController.text.length - 1);
-                  } catch (e) {
+                  });
+                } catch (e) {
+                  setState(() {
                     _resultController.text = '';
+                  });
+                }
+                break;
+              default:
+                var isValid = true;
+                var current =
+                    '${_resultController.text}$expr'.split('').reversed.join();
+                for (var i = 0; i < 16 && i < current.length; i++) {
+                  if (!nums.contains(current[i])) {
+                    break;
                   }
-                  break;
-                default:
-                  var isValid = true;
-                  var current = '${_resultController.text}$expr'
-                      .split('')
-                      .reversed
-                      .join();
-                  for (var i = 0; i < 16 && i < current.length; i++) {
-                    if (!nums.contains(current[i])) {
-                      break;
+                  if (current[current.length - 1 - i] == '0') {
+                    var copy = i;
+                    while (copy < current.length && current[copy] == '0') {
+                      copy++;
                     }
-                    if (i == 15) {
+                    if (copy == current.length && current.length != 1) {
                       isValid = false;
                     }
                   }
-                  if (isValid) {
-                    _resultController.text += expr;
+                  if (i == 15) {
+                    isValid = false;
                   }
-              }
-            });
+                }
+                if (isValid) {
+                  setState(() {
+                    _resultController.text += expr;
+                  });
+                }
+            }
           }
         },
         child: Center(
@@ -401,6 +418,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
           ')'.allMatches(expression).length) {
         expression += ')';
       }
+
       Expression exp = p.parse(expression);
       ContextModel cm = ContextModel();
       var res = exp.evaluate(EvaluationType.REAL, cm);
@@ -408,8 +426,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
       if (res > 999999999999999 || res.toString().contains('e+')) {
         throw 'pudge';
-      } else if (res - res.ceil() == 0) {
-        ans = res.ceil().toString();
+      } else if ((res - res.round()).abs() <= 0.0000001) {
+        ans = res.round().toString();
       } else if (res == pi) {
         ans = 'π';
       } else if (res == e) {
@@ -417,7 +435,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
       } else {
         ans = '$res';
       }
-
       setState(() {
         _resultController.text = ans;
       });
