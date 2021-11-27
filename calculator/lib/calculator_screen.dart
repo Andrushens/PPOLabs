@@ -25,8 +25,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
     'atan(',
     'ln(',
     'log(',
+    'asin(',
+    'acos(',
+  ];
+  final List<String> funcs = [
+    'sin',
+    'cos',
+    'tan',
+    'atan',
+    'ln',
+    'log',
     'asin',
     'acos',
+    '+',
+    '-',
+    'x',
+    '^',
+    '÷',
+    '√',
+    '%',
   ];
 
   @override
@@ -355,6 +372,38 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   _isInv = !_isInv;
                 });
                 break;
+              case '.':
+                var index = 0;
+                var current = _resultController.text;
+                var num = '';
+                var flag = true;
+
+                while (index < current.length) {
+                  num += current[current.length - 1 - index];
+                  for (var func in funcs) {
+                    if (num.contains(func)) {
+                      print(num.contains(func));
+                      flag = false;
+                      break;
+                    }
+                  }
+                  if (!flag) {
+                    break;
+                  }
+                  if (num.contains('.')) {
+                    return;
+                  }
+                  index++;
+                }
+
+                if (_resultController.text.isEmpty ||
+                    _resultController.text[_resultController.text.length - 1] !=
+                        '.') {
+                  setState(() {
+                    _resultController.text += expr;
+                  });
+                }
+                break;
               case 'C':
                 try {
                   var index = 0;
@@ -366,9 +415,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     var copy = func.split('').reversed.join('');
                     if (longFuncs.contains(copy)) {
                       setState(() {
-                        _resultController.text = _resultController.text
-                            .substring(
-                                0, _resultController.text.length - copy.length);
+                        _resultController.text =
+                            _resultController.text.substring(
+                          0,
+                          _resultController.text.length - copy.length + 1,
+                        );
                       });
                       break;
                     }
