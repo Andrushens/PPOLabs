@@ -18,6 +18,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
   bool _isInv = false;
   bool _isDemo = false;
   final List<String> nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  final List<String> longFuncs = [
+    'sin(',
+    'cos(',
+    'tan(',
+    'atan(',
+    'ln(',
+    'log(',
+    'asin',
+    'acos',
+  ];
 
   @override
   void initState() {
@@ -347,6 +357,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 break;
               case 'C':
                 try {
+                  var index = 0;
+                  var current = _resultController.text;
+                  var func = '';
+                  while (index < current.length) {
+                    func += current[current.length - 1 - index];
+                    index++;
+                    var copy = func.split('').reversed.join('');
+                    if (longFuncs.contains(copy)) {
+                      setState(() {
+                        _resultController.text = _resultController.text
+                            .substring(
+                                0, _resultController.text.length - copy.length);
+                      });
+                      break;
+                    }
+                  }
+
                   setState(() {
                     _resultController.text = _resultController.text
                         .substring(0, _resultController.text.length - 1);
@@ -426,7 +453,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
       if (res > 999999999999999 || res.toString().contains('e+')) {
         throw 'pudge';
-      } else if ((res - res.round()).abs() <= 0.0000001) {
+      } else if ((res - res.round()).abs() < 0.000001) {
         ans = res.round().toString();
       } else if (res == pi) {
         ans = 'π';
