@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/models/note.dart';
+import 'package:notes/services/get_circle_color.dart';
 import 'package:notes/views/note/note_cubit.dart';
+import 'package:notes/views/widgets/choose_label_dialog.dart';
 
 class NoteScreen extends StatelessWidget {
   NoteScreen({
@@ -35,30 +37,72 @@ class NoteScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            var title = context
-                                .read<NoteCubit>()
-                                .updateTitle(state.title);
-                            if (note != null) {
-                              var newNote = note!.copyWith(
-                                title: title,
-                                description: state.description,
-                              );
-                              Navigator.of(context).pop(newNote);
-                            } else {
-                              Navigator.of(context).pop(
-                                Note(
-                                  title: title,
-                                  description: state.description,
-                                  tags: [],
-                                ),
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.arrow_back),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                var title = context
+                                    .read<NoteCubit>()
+                                    .updateTitle(state.title);
+                                if (note != null) {
+                                  var newNote = note!.copyWith(
+                                    title: title,
+                                    description: state.description,
+                                    labels: state.currentLabels,
+                                  );
+                                  Navigator.of(context).pop(newNote);
+                                } else {
+                                  Navigator.of(context).pop(
+                                    Note(
+                                      title: title,
+                                      description: state.description,
+                                      labels: state.currentLabels,
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.arrow_back),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) {
+                                      return ChooseLabeLdialog(
+                                        possibleLabels: state.possibleLabels,
+                                        currentLabels: state.currentLabels,
+                                        onChanged: context
+                                            .read<NoteCubit>()
+                                            .updateLabel,
+                                      );
+                                    });
+                              },
+                              icon: const Icon(Icons.label_outline),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Row(
+                            children: List.generate(
+                              state.currentLabels.length,
+                              (index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 12.0),
+                                  child: CircleAvatar(
+                                    backgroundColor: getCircleColor(
+                                      state.currentLabels[index],
+                                    ),
+                                    radius: 6,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Column(

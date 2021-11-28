@@ -10,6 +10,13 @@ class NoteCubit extends Cubit<NoteState> {
       : super(NoteState(
           title: note?.title ?? '',
           description: note?.description ?? '',
+          possibleLabels: const [
+            'Very Important',
+            'Important',
+            'Not Very Important',
+            'Bruh'
+          ],
+          currentLabels: note?.labels ?? const [],
         ));
 
   void init(Note? note) {
@@ -30,5 +37,15 @@ class NoteCubit extends Cubit<NoteState> {
 
   void updateDescription(String description) {
     emit(state.copyWith(description: description));
+  }
+
+  void updateLabel(int index, bool value) {
+    var current = List<String>.from(state.currentLabels);
+    if (value) {
+      current.add(state.possibleLabels[index]);
+    } else {
+      current.remove(state.possibleLabels[index]);
+    }
+    emit(state.copyWith(currentLabels: current));
   }
 }

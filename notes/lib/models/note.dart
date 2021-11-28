@@ -4,15 +4,14 @@ class Note {
   String? id;
   final String title;
   final String description;
-  final List<String> tags;
+  final List<String> labels;
   DateTime? createdDate;
-  //TODO date work incorrect
 
   Note({
     this.id,
     required this.title,
     required this.description,
-    required this.tags,
+    required this.labels,
     this.createdDate,
   }) {
     id = id ?? const Uuid().v1();
@@ -22,13 +21,15 @@ class Note {
   Note copyWith({
     String? title,
     String? description,
-    List<String>? tags,
+    DateTime? createdDate,
+    List<String>? labels,
   }) {
     return Note(
       id: id,
       title: title ?? this.title,
       description: description ?? this.description,
-      tags: tags ?? this.tags,
+      createdDate: createdDate ?? this.createdDate,
+      labels: labels ?? this.labels,
     );
   }
 
@@ -38,6 +39,7 @@ class Note {
       'title': title,
       'description': description,
       'createdDate': createdDate.toString(),
+      'labels': labels.join('-'),
     };
   }
 }
