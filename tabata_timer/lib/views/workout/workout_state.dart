@@ -1,13 +1,11 @@
 part of 'workout_cubit.dart';
 
 class WorkoutState extends Equatable {
-  Workout? workout;
+  final Workout workout;
 
-  WorkoutState({
-    this.workout,
-  }) {
-    workout ??= Workout(name: 'My Workout');
-  }
+  const WorkoutState({
+    required this.workout,
+  });
 
   WorkoutState copyWith({
     Workout? workout,
@@ -19,11 +17,6 @@ class WorkoutState extends Equatable {
 
   @override
   List<Object> get props {
-    return [
-      if (workout != null)
-        {
-          workout!,
-        },
-    ];
+    return [workout];
   }
 }

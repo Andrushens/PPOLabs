@@ -9,7 +9,6 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(const HomeState());
 
   Future<void> init() async {
-    print(228);
     var workouts = await DatabaseProvider.fetchWorkouts();
     emit(state.copyWith(workouts: workouts));
   }
@@ -42,6 +41,13 @@ class HomeCubit extends Cubit<HomeState> {
       workouts: workouts,
       selectedWorkouts: [],
     ));
+  }
+
+  void deleteAll() {
+    for (var workout in state.workouts) {
+      DatabaseProvider.deleteWorkout(workout);
+    }
+    emit(state.copyWith(workouts: []));
   }
 
   void onWorkoutLongPress(Workout workout) {

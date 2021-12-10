@@ -8,6 +8,7 @@ class Workout {
   final int workTime;
   final int restTime;
   final int cycles;
+  final int sets;
   final Color color;
 
   Workout({
@@ -17,6 +18,7 @@ class Workout {
     this.workTime = 20,
     this.restTime = 10,
     this.cycles = 8,
+    this.sets = 1,
     this.color = Colors.blue,
   }) {
     id = id ?? const Uuid().v1();
@@ -29,6 +31,7 @@ class Workout {
     int? workTime,
     int? restTime,
     int? cycles,
+    int? sets,
     Color? color,
   }) {
     return Workout(
@@ -38,6 +41,7 @@ class Workout {
       workTime: workTime ?? this.workTime,
       restTime: restTime ?? this.restTime,
       cycles: cycles ?? this.cycles,
+      sets: sets ?? this.sets,
       color: color ?? this.color,
     );
   }
@@ -50,6 +54,7 @@ class Workout {
       'workTime': workTime,
       'restTime': restTime,
       'cycles': cycles,
+      'sets': sets,
       'color': color.value,
     };
   }

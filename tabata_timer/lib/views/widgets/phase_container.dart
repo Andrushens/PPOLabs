@@ -52,7 +52,7 @@ class PhaseContainer extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                     maxLength: 14,
-                    style: const TextStyle(fontSize: 32, color: Colors.black),
+                    style: const TextStyle(fontSize: 32),
                   ),
                 },
                 if (amount != null) ...{

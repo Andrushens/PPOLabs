@@ -20,6 +20,7 @@ class DatabaseProvider {
             'workTime INTEGER,'
             'restTime INTEGER,'
             'cycles INTEGER,'
+            'sets INTEGER,'
             'color INTEGER'
             ');');
       },
@@ -37,6 +38,7 @@ class DatabaseProvider {
         workTime: maps[i]['workTime'],
         restTime: maps[i]['restTime'],
         cycles: maps[i]['cycles'],
+        sets: maps[i]['sets'],
         color: Color(maps[i]['color']),
       );
     }).reversed.toList();
@@ -46,6 +48,7 @@ class DatabaseProvider {
     await database.insert(
       'workouts',
       workout.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
