@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class TimerPhaseContainer extends StatelessWidget {
   const TimerPhaseContainer({
     required this.index,
+    required this.isActive,
     required this.phase,
     required this.duration,
     required this.onTap,
@@ -10,6 +11,7 @@ class TimerPhaseContainer extends StatelessWidget {
   }) : super(key: key);
 
   final int index;
+  final bool isActive;
   final String phase;
   final int duration;
   final VoidCallback onTap;
@@ -25,8 +27,13 @@ class TimerPhaseContainer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              phase != 'Finish' ? '$index. $phase: $duration' : phase,
-              style: const TextStyle(fontSize: 34),
+              phase != 'Finish' ? '${index + 1}. $phase: $duration' : phase,
+              style: TextStyle(
+                fontSize: 34,
+                color: isActive
+                    ? Colors.red
+                    : Theme.of(context).textTheme.bodyText1!.color,
+              ),
             ),
           ],
         ),

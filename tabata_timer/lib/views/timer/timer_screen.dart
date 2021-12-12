@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabata_timer/entities/workout.dart';
@@ -84,25 +82,17 @@ class _TimerScreenState extends State<TimerScreen> {
                         children: List.generate(
                           state.totalCycles,
                           (index) {
-                            var id = index % 2;
-                            var phase = index == 0
-                                ? 'Prepare'
-                                : index == state.totalCycles - 1
-                                    ? 'Finish'
-                                    : id % 2 == 1
-                                        ? 'Work'
-                                        : 'Rest';
-                            var duration = index == 0
-                                ? state.workout.prepareTime
-                                : id % 2 == 1
-                                    ? state.workout.workTime
-                                    : state.workout.restTime;
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: TimerPhaseContainer(
-                                index: index + 1,
-                                phase: phase,
-                                duration: duration,
+                                index: index,
+                                isActive: index == state.currentPhaseIndex,
+                                phase: context
+                                    .read<TimerCubit>()
+                                    .getPhaseByIndex(index),
+                                duration: context
+                                    .read<TimerCubit>()
+                                    .getDurationByIndex(index),
                                 onTap: () {},
                               ),
                             );

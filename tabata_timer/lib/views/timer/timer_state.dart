@@ -4,6 +4,7 @@ class TimerState extends Equatable {
   final Workout workout;
   final bool isActive;
   final String currentPhase;
+  final int currentPhaseIndex;
   final int currentDuration;
   final int totalCycles;
 
@@ -11,6 +12,7 @@ class TimerState extends Equatable {
     required this.workout,
     this.isActive = false,
     this.currentPhase = '',
+    this.currentPhaseIndex = 0,
     this.currentDuration = 0,
     this.totalCycles = 0,
   });
@@ -18,14 +20,15 @@ class TimerState extends Equatable {
   TimerState copyWith({
     bool? isActive,
     String? currentPhase,
+    int? currentPhaseIndex,
     int? currentDuration,
-    String? currentTotalDuration,
     int? totalCycles,
   }) {
     return TimerState(
       workout: workout,
       isActive: isActive ?? this.isActive,
       currentPhase: currentPhase ?? this.currentPhase,
+      currentPhaseIndex: currentPhaseIndex ?? this.currentPhaseIndex,
       currentDuration: currentDuration ?? this.currentDuration,
       totalCycles: totalCycles ?? this.totalCycles,
     );
@@ -37,6 +40,7 @@ class TimerState extends Equatable {
       workout,
       isActive,
       currentPhase,
+      currentPhaseIndex,
       currentDuration,
       totalCycles,
     ];

@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path/path.dart';
@@ -14,6 +15,29 @@ void main() async {
   // await deleteDatabase(
   //   join(await getDatabasesPath(), 'tabata_app_database.db'),
   // );
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelGroupKey: 'media_player_tests',
+        channelKey: 'media_player',
+        channelName: 'Media player controller',
+        channelDescription: 'Media player controller',
+        defaultPrivacy: NotificationPrivacy.Public,
+        enableVibration: false,
+        enableLights: false,
+        playSound: false,
+        locked: true,
+      ),
+    ],
+    channelGroups: [
+      NotificationChannelGroup(
+        channelGroupkey: 'media_player_tests',
+        channelGroupName: 'Media Player tests',
+      ),
+    ],
+    debug: true,
+  );
   await DatabaseProvider.init();
   runApp(const MyApp());
 }
