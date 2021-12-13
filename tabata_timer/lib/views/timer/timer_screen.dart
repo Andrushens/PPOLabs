@@ -19,9 +19,15 @@ class TimerScreen extends StatefulWidget {
 
 class _TimerScreenState extends State<TimerScreen> {
   @override
+  void dispose() {
+    stopTimerService();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TimerCubit(widget.workout),
+      create: (context) => TimerCubit(widget.workout, context),
       child: BlocBuilder<TimerCubit, TimerState>(
         builder: (context, state) {
           return Scaffold(

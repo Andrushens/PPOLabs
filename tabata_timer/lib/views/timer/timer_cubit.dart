@@ -12,14 +12,18 @@ import 'package:tabata_timer/services/locale/locale_cubit.dart';
 part 'timer_state.dart';
 
 class TimerCubit extends Cubit<TimerState> {
-  TimerCubit(Workout workout) : super(TimerState(workout: workout)) {
+  TimerCubit(Workout workout, BuildContext context)
+      : super(TimerState(workout: workout)) {
     emit(state.copyWith(
-      currentPhase: 'Prepare',
+      currentPhaseString: context.read<LocaleCubit>().state.consts['prepare'],
       totalCycles: 1 + 2 * workout.cycles * workout.sets,
       currentDuration: workout.prepareTime,
     ));
     startTimerService();
-    updateBackgroundTimer('Prepare', state.workout.prepareTime);
+    updateBackgroundTimer(
+      context.read<LocaleCubit>().state.consts['prepare']!,
+      state.workout.prepareTime,
+    );
   }
 
   Timer? _timer;
@@ -36,7 +40,8 @@ class TimerCubit extends Cubit<TimerState> {
           if (state.currentPhaseIndex == state.totalCycles - 2) {
             emit(state.copyWith(
               currentPhaseIndex: state.currentPhaseIndex + 1,
-              currentPhase: 'Finish',
+              currentPhaseString:
+                  context.read<LocaleCubit>().state.consts['finish'],
             ));
             stopTimer();
           } else {
@@ -46,7 +51,7 @@ class TimerCubit extends Cubit<TimerState> {
             emit(state.copyWith(
               currentDuration: newDuration,
               currentPhaseIndex: newIndex,
-              currentPhase: newPhase,
+              currentPhaseString: newPhase,
             ));
             updateBackgroundTimer(
               state.currentPhaseString,
@@ -120,7 +125,7 @@ class TimerCubit extends Cubit<TimerState> {
     emit(state.copyWith(
       currentDuration: newDuration,
       currentPhaseIndex: index,
-      currentPhase: newPhase,
+      currentPhaseString: newPhase,
     ));
     updateBackgroundTimer(state.currentPhaseString, state.currentDuration);
   }

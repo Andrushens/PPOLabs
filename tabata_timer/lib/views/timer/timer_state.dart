@@ -19,7 +19,7 @@ class TimerState extends Equatable {
 
   TimerState copyWith({
     bool? isActive,
-    String? currentPhase,
+    String? currentPhaseString,
     int? currentPhaseIndex,
     int? currentDuration,
     int? totalCycles,
@@ -27,7 +27,7 @@ class TimerState extends Equatable {
     return TimerState(
       workout: workout,
       isActive: isActive ?? this.isActive,
-      currentPhaseString: currentPhase ?? this.currentPhaseString,
+      currentPhaseString: currentPhaseString ?? this.currentPhaseString,
       currentPhaseIndex: currentPhaseIndex ?? this.currentPhaseIndex,
       currentDuration: currentDuration ?? this.currentDuration,
       totalCycles: totalCycles ?? this.totalCycles,
