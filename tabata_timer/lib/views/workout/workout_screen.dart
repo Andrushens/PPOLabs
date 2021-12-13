@@ -30,6 +30,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             builder: (context, state) {
               return Scaffold(
                 appBar: AppBar(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () async {
@@ -42,12 +43,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       Text(state.workout.name),
                     ],
                   ),
-                  actions: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.settings),
-                    ),
-                  ],
                 ),
                 body: SingleChildScrollView(
                   child: Column(

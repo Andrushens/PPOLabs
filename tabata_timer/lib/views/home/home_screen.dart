@@ -3,6 +3,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabata_timer/entities/workout.dart';
+import 'package:tabata_timer/services/background_timer.dart';
 import 'package:tabata_timer/services/locale/locale_cubit.dart';
 import 'package:tabata_timer/views/home/home_cubit.dart';
 import 'package:tabata_timer/views/widgets/drawer.dart';
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 var workouts = state.workouts;
                 return Scaffold(
                   appBar: AppBar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     title: Center(
                       child: Text(
                         '${context.read<LocaleCubit>().state.consts['workouts']}: ${workouts.length}',
@@ -37,25 +39,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   drawer: const CustomDrawer(),
                   floatingActionButton: FloatingActionButton(
-                    onPressed: state.selectedWorkouts.isEmpty
-                        ? () async {
-                            var workout = await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const WorkoutScreen();
-                                },
-                              ),
-                            ) as Workout?;
-                            context.read<HomeCubit>().addWorkout(workout);
-                          }
-                        : context.read<HomeCubit>().deleteWorkouts,
-                    child: Icon(
-                      state.selectedWorkouts.isEmpty
-                          ? Icons.add
-                          : Icons.delete_outline_rounded,
-                      size: 32,
-                    ),
+                    onPressed: () async {
+                      (await isRunning())
+                          ? stopTimerService()
+                          : startTimerService();
+                    },
                   ),
+                  // FloatingActionButton(
+                  //   onPressed: state.selectedWorkouts.isEmpty
+                  //       ? () async {
+                  //           var workout = await Navigator.of(context).push(
+                  //             MaterialPageRoute(
+                  //               builder: (context) {
+                  //                 return const WorkoutScreen();
+                  //               },
+                  //             ),
+                  //           ) as Workout?;
+                  //           context.read<HomeCubit>().addWorkout(workout);
+                  //         }
+                  //       : context.read<HomeCubit>().deleteWorkouts,
+                  //   child: Icon(
+                  //     state.selectedWorkouts.isEmpty
+                  //         ? Icons.add
+                  //         : Icons.delete_outline_rounded,
+                  //     size: 32,
+                  //   ),
+                  // ),
                   body: ListView.builder(
                     itemCount: workouts.length,
                     itemBuilder: (context, index) {

@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tabata_timer/entities/workout.dart';
+import 'package:tabata_timer/services/background_timer.dart';
 
 part 'timer_state.dart';
 
@@ -14,6 +15,8 @@ class TimerCubit extends Cubit<TimerState> {
       totalCycles: 1 + 2 * workout.cycles * workout.sets,
       currentDuration: workout.prepareTime,
     ));
+    startTimerService();
+    updateBackgroundTimer('Prepare', state.workout.prepareTime);
   }
 
   Timer? _timer;
@@ -24,21 +27,28 @@ class TimerCubit extends Cubit<TimerState> {
     }
     emit(state.copyWith(isActive: true));
     _timer = Timer.periodic(
-      const Duration(milliseconds: 200),
+      const Duration(milliseconds: 1000),
       (timer) {
         if (state.currentDuration == 0) {
           if (state.currentPhaseIndex == state.totalCycles - 2) {
             emit(state.copyWith(
               currentPhaseIndex: state.currentPhaseIndex + 1,
+              currentPhase: 'Finish',
             ));
             stopTimer();
           } else {
             var newIndex = state.currentPhaseIndex + 1;
+            var newPhase = getPhaseByIndex(newIndex);
             var newDuration = getDurationByIndex(newIndex);
             emit(state.copyWith(
               currentDuration: newDuration,
               currentPhaseIndex: newIndex,
+              currentPhase: newPhase,
             ));
+            updateBackgroundTimer(
+              state.currentPhaseString,
+              state.currentDuration,
+            );
           }
         } else {
           if (state.currentDuration == 1) {
@@ -52,7 +62,10 @@ class TimerCubit extends Cubit<TimerState> {
             }
           }
           emit(state.copyWith(currentDuration: state.currentDuration - 1));
-          if (state.currentDuration % 5 == 0) {}
+          updateBackgroundTimer(
+            state.currentPhaseString,
+            state.currentDuration,
+          );
         }
       },
     );
@@ -77,9 +90,35 @@ class TimerCubit extends Cubit<TimerState> {
   int getDurationByIndex(int index) {
     var duration = index == 0
         ? state.workout.prepareTime
-        : index % 2 == 1
-            ? state.workout.workTime
-            : state.workout.restTime;
+        : index == state.totalCycles - 1
+            ? 0
+            : index % 2 == 1
+                ? state.workout.workTime
+                : state.workout.restTime;
     return duration;
+  }
+
+  void skipNextPhase() {
+    changePhase(state.currentPhaseIndex + 1);
+  }
+
+  void skipPreviousPhase() {
+    changePhase(state.currentPhaseIndex - 1);
+  }
+
+  void changePhase(index) {
+    if (index == -1) {
+      emit(state.copyWith(currentDuration: state.workout.prepareTime));
+      return;
+    }
+    if (index == state.totalCycles - 1) return;
+    var newPhase = getPhaseByIndex(index);
+    var newDuration = getDurationByIndex(index);
+    emit(state.copyWith(
+      currentDuration: newDuration,
+      currentPhaseIndex: index,
+      currentPhase: newPhase,
+    ));
+    updateBackgroundTimer(state.currentPhaseString, state.currentDuration);
   }
 }

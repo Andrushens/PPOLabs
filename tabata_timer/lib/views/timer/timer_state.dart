@@ -3,7 +3,7 @@ part of 'timer_cubit.dart';
 class TimerState extends Equatable {
   final Workout workout;
   final bool isActive;
-  final String currentPhase;
+  final String currentPhaseString;
   final int currentPhaseIndex;
   final int currentDuration;
   final int totalCycles;
@@ -11,7 +11,7 @@ class TimerState extends Equatable {
   const TimerState({
     required this.workout,
     this.isActive = false,
-    this.currentPhase = '',
+    this.currentPhaseString = '',
     this.currentPhaseIndex = 0,
     this.currentDuration = 0,
     this.totalCycles = 0,
@@ -27,7 +27,7 @@ class TimerState extends Equatable {
     return TimerState(
       workout: workout,
       isActive: isActive ?? this.isActive,
-      currentPhase: currentPhase ?? this.currentPhase,
+      currentPhaseString: currentPhase ?? this.currentPhaseString,
       currentPhaseIndex: currentPhaseIndex ?? this.currentPhaseIndex,
       currentDuration: currentDuration ?? this.currentDuration,
       totalCycles: totalCycles ?? this.totalCycles,
@@ -39,7 +39,7 @@ class TimerState extends Equatable {
     return [
       workout,
       isActive,
-      currentPhase,
+      currentPhaseString,
       currentPhaseIndex,
       currentDuration,
       totalCycles,

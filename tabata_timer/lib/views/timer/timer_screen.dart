@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabata_timer/entities/workout.dart';
+import 'package:tabata_timer/services/background_timer.dart';
 import 'package:tabata_timer/views/timer/timer_cubit.dart';
 import 'package:tabata_timer/views/widgets/timer_phase_container.dart';
 
@@ -25,34 +26,18 @@ class _TimerScreenState extends State<TimerScreen> {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              leading: IconButton(
-                onPressed: Navigator.of(context).pop,
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 40,
-                ),
-              ),
+              backgroundColor: Theme.of(context).colorScheme.primary,
               centerTitle: true,
+              leading: BackButton(
+                onPressed: () {
+                  stopTimerService();
+                  Navigator.of(context).pop();
+                },
+              ),
               title: Text(
-                state.currentPhase,
+                state.currentPhaseString,
                 style: const TextStyle(fontSize: 34),
               ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: IconButton(
-                    onPressed: state.isActive
-                        ? context.read<TimerCubit>().stopTimer
-                        : context.read<TimerCubit>().startTimer,
-                    icon: Icon(
-                      state.isActive
-                          ? Icons.stop_rounded
-                          : Icons.play_arrow_rounded,
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ],
             ),
             body: SafeArea(
               child: Padding(
@@ -61,19 +46,28 @@ class _TimerScreenState extends State<TimerScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 30),
-                      CircleAvatar(
-                        radius: 156,
-                        backgroundColor: Theme.of(context)
-                            .buttonTheme
-                            .colorScheme!
-                            .background,
+                      GestureDetector(
+                        onTap: state.isActive
+                            ? context.read<TimerCubit>().stopTimer
+                            : context.read<TimerCubit>().startTimer,
                         child: CircleAvatar(
-                          backgroundColor:
-                              Theme.of(context).scaffoldBackgroundColor,
-                          radius: 150,
-                          child: Text(
-                            state.currentDuration.toString(),
-                            style: const TextStyle(fontSize: 100),
+                          radius: 156,
+                          backgroundColor: state.isActive
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.red.withOpacity(0.3),
+                          child: CircleAvatar(
+                            backgroundColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            radius: 150,
+                            child: Text(
+                              state.currentDuration.toString(),
+                              style: TextStyle(
+                                fontSize: 100,
+                                color: state.isActive
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Colors.red.withOpacity(0.7),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -93,7 +87,9 @@ class _TimerScreenState extends State<TimerScreen> {
                                 duration: context
                                     .read<TimerCubit>()
                                     .getDurationByIndex(index),
-                                onTap: () {},
+                                onTap: () {
+                                  context.read<TimerCubit>().changePhase(index);
+                                },
                               ),
                             );
                           },
@@ -101,6 +97,43 @@ class _TimerScreenState extends State<TimerScreen> {
                       )
                     ],
                   ),
+                ),
+              ),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              color: Theme.of(context).colorScheme.primary,
+              child: SizedBox(
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                      onPressed: context.read<TimerCubit>().skipPreviousPhase,
+                      icon: const Icon(Icons.skip_previous_rounded),
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      iconSize: 60,
+                    ),
+                    IconButton(
+                      onPressed: state.isActive
+                          ? context.read<TimerCubit>().stopTimer
+                          : context.read<TimerCubit>().startTimer,
+                      icon: Icon(
+                        state.currentPhaseIndex == state.totalCycles - 1
+                            ? Icons.replay
+                            : state.isActive
+                                ? Icons.stop_rounded
+                                : Icons.play_arrow_rounded,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      iconSize: 60,
+                    ),
+                    IconButton(
+                      onPressed: context.read<TimerCubit>().skipNextPhase,
+                      icon: const Icon(Icons.skip_next_rounded),
+                      iconSize: 60,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ],
                 ),
               ),
             ),
