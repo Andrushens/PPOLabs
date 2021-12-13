@@ -36,9 +36,7 @@ class PhaseContainer extends StatelessWidget {
                 if (amount != null) ...{
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 34,
-                    ),
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                 } else ...{
                   TextFormField(
@@ -52,7 +50,7 @@ class PhaseContainer extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                     maxLength: 14,
-                    style: const TextStyle(fontSize: 32),
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                 },
                 if (amount != null) ...{
@@ -68,9 +66,7 @@ class PhaseContainer extends StatelessWidget {
                       ),
                       Text(
                         '${amount!}',
-                        style: const TextStyle(
-                          fontSize: 34,
-                        ),
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       IconButton(
                         onPressed: onAddPressed,

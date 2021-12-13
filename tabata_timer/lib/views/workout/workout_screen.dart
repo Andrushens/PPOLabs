@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabata_timer/entities/workout.dart';
-import 'package:tabata_timer/services/db_provider.dart';
+import 'package:tabata_timer/services/database/db_provider.dart';
 import 'package:tabata_timer/services/locale/locale_cubit.dart';
 import 'package:tabata_timer/views/timer/timer_screen.dart';
 import 'package:tabata_timer/views/widgets/phase_container.dart';
@@ -25,7 +25,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     return BlocBuilder<LocaleCubit, LocaleState>(
       builder: (context, _) {
         return BlocProvider(
-          create: (context) => WorkoutCubit(widget.workout),
+          create: (context) => WorkoutCubit(widget.workout, context),
           child: BlocBuilder<WorkoutCubit, WorkoutState>(
             builder: (context, state) {
               return Scaffold(
@@ -53,7 +53,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         onTextChanged: context.read<WorkoutCubit>().updateTitle,
                       ),
                       PhaseContainer(
-                        title: 'Prepare',
+                        title: context
+                            .read<LocaleCubit>()
+                            .state
+                            .consts['prepare']!,
                         icon: Icons.accessible,
                         amount: state.workout.prepareTime,
                         onAddPressed:
@@ -62,7 +65,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             context.read<WorkoutCubit>().decreasePrepareTime,
                       ),
                       PhaseContainer(
-                        title: 'Work',
+                        title:
+                            context.read<LocaleCubit>().state.consts['work']!,
                         icon: Icons.accessible_forward_outlined,
                         amount: state.workout.workTime,
                         onAddPressed:
@@ -71,7 +75,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             context.read<WorkoutCubit>().decreaseWorkTime,
                       ),
                       PhaseContainer(
-                        title: 'Rest',
+                        title:
+                            context.read<LocaleCubit>().state.consts['rest']!,
                         icon: Icons.accessibility_new_outlined,
                         amount: state.workout.restTime,
                         onAddPressed:
@@ -80,7 +85,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             context.read<WorkoutCubit>().decreaseRestTime,
                       ),
                       PhaseContainer(
-                        title: 'Cycles',
+                        title:
+                            context.read<LocaleCubit>().state.consts['cycles']!,
                         icon: Icons.repeat,
                         amount: state.workout.cycles,
                         onAddPressed:
@@ -89,7 +95,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             context.read<WorkoutCubit>().decreaseCycles,
                       ),
                       PhaseContainer(
-                        title: 'Sets',
+                        title:
+                            context.read<LocaleCubit>().state.consts['sets']!,
                         icon: Icons.replay,
                         amount: state.workout.sets,
                         onAddPressed: context.read<WorkoutCubit>().increaseSets,
@@ -119,11 +126,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           ),
                         );
                       },
-                      child: const Expanded(
+                      child: Expanded(
                         child: Text(
-                          'START',
+                          context.read<LocaleCubit>().state.consts['start']!,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 24),
+                          style:
+                              Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    color: Colors.white,
+                                  ),
                         ),
                       ),
                     ),

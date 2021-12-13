@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 import 'package:tabata_timer/entities/workout.dart';
-import 'package:tabata_timer/services/background_timer.dart';
+import 'package:tabata_timer/services/background_timer/background_timer.dart';
+import 'package:tabata_timer/services/locale/locale_cubit.dart';
 
 part 'timer_state.dart';
 
@@ -21,7 +24,7 @@ class TimerCubit extends Cubit<TimerState> {
 
   Timer? _timer;
 
-  void startTimer() {
+  void startTimer(BuildContext context) {
     if (state.currentPhaseIndex == state.totalCycles - 1) {
       emit(state.copyWith(currentPhaseIndex: -1));
     }
@@ -38,7 +41,7 @@ class TimerCubit extends Cubit<TimerState> {
             stopTimer();
           } else {
             var newIndex = state.currentPhaseIndex + 1;
-            var newPhase = getPhaseByIndex(newIndex);
+            var newPhase = getPhaseByIndex(newIndex, context);
             var newDuration = getDurationByIndex(newIndex);
             emit(state.copyWith(
               currentDuration: newDuration,
@@ -76,15 +79,15 @@ class TimerCubit extends Cubit<TimerState> {
     emit(state.copyWith(isActive: false));
   }
 
-  String getPhaseByIndex(int index) {
+  String getPhaseByIndex(int index, BuildContext context) {
     var phase = index == 0
-        ? 'Prepare'
+        ? context.read<LocaleCubit>().state.consts['prepare']
         : index == state.totalCycles - 1
-            ? 'Finish'
+            ? context.read<LocaleCubit>().state.consts['finish']
             : index % 2 == 1
-                ? 'Work'
-                : 'Rest';
-    return phase;
+                ? context.read<LocaleCubit>().state.consts['work']
+                : context.read<LocaleCubit>().state.consts['rest'];
+    return phase as String;
   }
 
   int getDurationByIndex(int index) {
@@ -98,21 +101,21 @@ class TimerCubit extends Cubit<TimerState> {
     return duration;
   }
 
-  void skipNextPhase() {
-    changePhase(state.currentPhaseIndex + 1);
+  void skipNextPhase(context) {
+    changePhase(state.currentPhaseIndex + 1, context);
   }
 
-  void skipPreviousPhase() {
-    changePhase(state.currentPhaseIndex - 1);
+  void skipPreviousPhase(context) {
+    changePhase(state.currentPhaseIndex - 1, context);
   }
 
-  void changePhase(index) {
+  void changePhase(index, context) {
     if (index == -1) {
       emit(state.copyWith(currentDuration: state.workout.prepareTime));
       return;
     }
     if (index == state.totalCycles - 1) return;
-    var newPhase = getPhaseByIndex(index);
+    var newPhase = getPhaseByIndex(index, context);
     var newDuration = getDurationByIndex(index);
     emit(state.copyWith(
       currentDuration: newDuration,

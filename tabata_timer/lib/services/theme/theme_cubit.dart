@@ -8,6 +8,26 @@ class ThemeCubit extends Cubit<ThemeData> {
   bool isDark() => state == darkTheme;
 
   void changeTheme() {
-    emit(state == lightTheme ? darkTheme : lightTheme);
+    emit(
+      state == lightTheme
+          ? darkTheme
+          : state == lightThemeBig
+              ? darkThemeBig
+              : state == darkTheme
+                  ? lightTheme
+                  : lightThemeBig,
+    );
+  }
+
+  void changeFont() {
+    emit(
+      state == lightTheme
+          ? lightThemeBig
+          : state == lightThemeBig
+              ? lightTheme
+              : state == darkTheme
+                  ? darkThemeBig
+                  : darkTheme,
+    );
   }
 }

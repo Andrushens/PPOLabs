@@ -28,12 +28,11 @@ class TimerPhaseContainer extends StatelessWidget {
           children: [
             Text(
               phase != 'Finish' ? '${index + 1}. $phase: $duration' : phase,
-              style: TextStyle(
-                fontSize: 34,
-                color: isActive
-                    ? Colors.red
-                    : Theme.of(context).textTheme.bodyText1!.color,
-              ),
+              style: Theme.of(context).textTheme.headline2!.copyWith(
+                    color: isActive
+                        ? Colors.red
+                        : Theme.of(context).textTheme.bodyText1!.color,
+                  ),
             ),
           ],
         ),

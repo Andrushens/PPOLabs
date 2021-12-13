@@ -42,13 +42,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               : Icons.light_mode,
                           size: 24,
                         ),
-                        const SizedBox(width: 22),
+                        const SizedBox(width: 10),
                         Text(
                           context
                               .read<LocaleCubit>()
                               .state
                               .consts['changeTheme']!,
-                          style: const TextStyle(fontSize: 24),
+                          style: Theme.of(context).textTheme.bodyText2,
                         ),
                       ],
                     ),
@@ -69,13 +69,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           Icons.language,
                           size: 24,
                         ),
-                        const SizedBox(width: 22),
+                        const SizedBox(width: 10),
                         Text(
                           context
                               .read<LocaleCubit>()
                               .state
                               .consts['changeLocale']!,
-                          style: const TextStyle(fontSize: 24),
+                          style: Theme.of(context).textTheme.bodyText2,
                         ),
                       ],
                     ),
@@ -96,13 +96,39 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           Icons.delete_forever,
                           size: 24,
                         ),
-                        const SizedBox(width: 22),
+                        const SizedBox(width: 10),
                         Text(
                           context
                               .read<LocaleCubit>()
                               .state
                               .consts['deleteAll']!,
-                          style: const TextStyle(fontSize: 24),
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: () {
+                    context.read<ThemeCubit>().changeFont();
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(7),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.format_size_rounded,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          context
+                              .read<LocaleCubit>()
+                              .state
+                              .consts['changeFont']!,
+                          style: Theme.of(context).textTheme.bodyText2,
                         ),
                       ],
                     ),

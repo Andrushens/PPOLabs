@@ -3,7 +3,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabata_timer/entities/workout.dart';
-import 'package:tabata_timer/services/background_timer.dart';
+import 'package:tabata_timer/services/background_timer/background_timer.dart';
 import 'package:tabata_timer/services/locale/locale_cubit.dart';
 import 'package:tabata_timer/views/home/home_cubit.dart';
 import 'package:tabata_timer/views/widgets/drawer.dart';
@@ -39,32 +39,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   drawer: const CustomDrawer(),
                   floatingActionButton: FloatingActionButton(
-                    onPressed: () async {
-                      (await isRunning())
-                          ? stopTimerService()
-                          : startTimerService();
-                    },
+                    onPressed: state.selectedWorkouts.isEmpty
+                        ? () async {
+                            var workout = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return const WorkoutScreen();
+                                },
+                              ),
+                            ) as Workout?;
+                            context.read<HomeCubit>().addWorkout(workout);
+                          }
+                        : context.read<HomeCubit>().deleteWorkouts,
+                    child: Icon(
+                      state.selectedWorkouts.isEmpty
+                          ? Icons.add
+                          : Icons.delete_outline_rounded,
+                      size: 32,
+                    ),
                   ),
-                  // FloatingActionButton(
-                  //   onPressed: state.selectedWorkouts.isEmpty
-                  //       ? () async {
-                  //           var workout = await Navigator.of(context).push(
-                  //             MaterialPageRoute(
-                  //               builder: (context) {
-                  //                 return const WorkoutScreen();
-                  //               },
-                  //             ),
-                  //           ) as Workout?;
-                  //           context.read<HomeCubit>().addWorkout(workout);
-                  //         }
-                  //       : context.read<HomeCubit>().deleteWorkouts,
-                  //   child: Icon(
-                  //     state.selectedWorkouts.isEmpty
-                  //         ? Icons.add
-                  //         : Icons.delete_outline_rounded,
-                  //     size: 32,
-                  //   ),
-                  // ),
                   body: ListView.builder(
                     itemCount: workouts.length,
                     itemBuilder: (context, index) {

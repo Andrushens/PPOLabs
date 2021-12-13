@@ -1,15 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 import 'package:tabata_timer/entities/workout.dart';
+import 'package:tabata_timer/services/locale/locale_cubit.dart';
 
 part 'workout_state.dart';
 
 class WorkoutCubit extends Cubit<WorkoutState> {
-  WorkoutCubit(Workout? workout)
+  WorkoutCubit(Workout? workout, BuildContext context)
       : super(
           WorkoutState(
-            workout: workout ?? Workout(name: 'Create workout'),
+            workout: workout ??
+                Workout(
+                  name: context
+                      .read<LocaleCubit>()
+                      .state
+                      .consts['createWorkout']!,
+                ),
           ),
         );
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabata_timer/entities/workout.dart';
-import 'package:tabata_timer/services/background_timer.dart';
+import 'package:tabata_timer/services/background_timer/background_timer.dart';
 import 'package:tabata_timer/views/timer/timer_cubit.dart';
 import 'package:tabata_timer/views/widgets/timer_phase_container.dart';
 
@@ -36,7 +36,9 @@ class _TimerScreenState extends State<TimerScreen> {
               ),
               title: Text(
                 state.currentPhaseString,
-                style: const TextStyle(fontSize: 34),
+                style: Theme.of(context).textTheme.headline2!.copyWith(
+                      color: Colors.white,
+                    ),
               ),
             ),
             body: SafeArea(
@@ -47,9 +49,11 @@ class _TimerScreenState extends State<TimerScreen> {
                     children: [
                       const SizedBox(height: 30),
                       GestureDetector(
-                        onTap: state.isActive
-                            ? context.read<TimerCubit>().stopTimer
-                            : context.read<TimerCubit>().startTimer,
+                        onTap: () {
+                          state.isActive
+                              ? context.read<TimerCubit>().stopTimer()
+                              : context.read<TimerCubit>().startTimer(context);
+                        },
                         child: CircleAvatar(
                           radius: 156,
                           backgroundColor: state.isActive
@@ -83,12 +87,14 @@ class _TimerScreenState extends State<TimerScreen> {
                                 isActive: index == state.currentPhaseIndex,
                                 phase: context
                                     .read<TimerCubit>()
-                                    .getPhaseByIndex(index),
+                                    .getPhaseByIndex(index, context),
                                 duration: context
                                     .read<TimerCubit>()
                                     .getDurationByIndex(index),
                                 onTap: () {
-                                  context.read<TimerCubit>().changePhase(index);
+                                  context
+                                      .read<TimerCubit>()
+                                      .changePhase(index, context);
                                 },
                               ),
                             );
@@ -108,15 +114,18 @@ class _TimerScreenState extends State<TimerScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     IconButton(
-                      onPressed: context.read<TimerCubit>().skipPreviousPhase,
+                      onPressed: () =>
+                          context.read<TimerCubit>().skipPreviousPhase(context),
                       icon: const Icon(Icons.skip_previous_rounded),
                       color: Theme.of(context).colorScheme.onPrimary,
                       iconSize: 60,
                     ),
                     IconButton(
-                      onPressed: state.isActive
-                          ? context.read<TimerCubit>().stopTimer
-                          : context.read<TimerCubit>().startTimer,
+                      onPressed: () {
+                        state.isActive
+                            ? context.read<TimerCubit>().stopTimer()
+                            : context.read<TimerCubit>().startTimer(context);
+                      },
                       icon: Icon(
                         state.currentPhaseIndex == state.totalCycles - 1
                             ? Icons.replay
@@ -128,7 +137,8 @@ class _TimerScreenState extends State<TimerScreen> {
                       iconSize: 60,
                     ),
                     IconButton(
-                      onPressed: context.read<TimerCubit>().skipNextPhase,
+                      onPressed: () =>
+                          context.read<TimerCubit>().skipNextPhase(context),
                       icon: const Icon(Icons.skip_next_rounded),
                       iconSize: 60,
                       color: Theme.of(context).colorScheme.onPrimary,

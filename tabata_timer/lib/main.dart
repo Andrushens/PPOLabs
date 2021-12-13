@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tabata_timer/services/background_timer.dart';
-import 'package:tabata_timer/services/db_provider.dart';
+import 'package:tabata_timer/services/background_timer/background_timer.dart';
+import 'package:tabata_timer/services/database/db_provider.dart';
 import 'package:tabata_timer/services/locale/locale_cubit.dart';
 import 'package:tabata_timer/services/theme/theme_cubit.dart';
 import 'package:tabata_timer/views/home/home_cubit.dart';

@@ -28,9 +28,7 @@ class WorkoutContainer extends StatelessWidget {
       },
       leading: Text(
         workout.name,
-        style: const TextStyle(
-          fontSize: 22,
-        ),
+        style: Theme.of(context).textTheme.bodyText2,
       ),
       trailing: IconButton(
         onPressed: onButtonPressed,
