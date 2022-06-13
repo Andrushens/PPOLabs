@@ -18,10 +18,14 @@ dependencies:
   url_launcher: ^6.0.15
   intl: ^0.17.0
   webfeed: ^0.7.0
-  webview_flutter: ^2.3.1
+  webview_flutter: ^3.0.1
   sqflite: ^2.0.0+4
   uuid: ^3.0.5
   connectivity_plus: ^2.1.0
+  flutter_bloc: ^8.0.1
+  bloc: ^8.0.3
+  equatable: ^2.0.3
+  flutter_markdown: ^0.6.9
 
 dev_dependencies:
   flutter_test:
